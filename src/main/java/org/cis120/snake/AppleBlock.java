@@ -34,6 +34,6 @@ public class AppleBlock extends Block{
 
     @Override
     public void draw(Graphics g) {
-        g.drawImage(img, this.getPx() , this.getPy() , this.getWidth(), this.getHeight(), null);
+        g.drawImage(img, this.getPx() * 30, this.getPy() * 30, this.getWidth(), this.getHeight(), null);
     }
 }

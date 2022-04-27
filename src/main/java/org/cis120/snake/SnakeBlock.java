@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class SnakeBlock extends Block {
     public static int SIZE = 30;
-    public Color color;
+    private Color color;
 
     /**
      * Note that, because we don't need to do anything special when constructing
@@ -19,6 +19,6 @@ public class SnakeBlock extends Block {
     @Override
     public void draw(Graphics g) {
         g.setColor(color);
-        g.fillOval(this.getPx(), this.getPy(), this.getWidth(), this.getHeight());
+        g.fillOval(this.getPx() * 30, this.getPy() * 30, this.getWidth(), this.getHeight());
     }
 }

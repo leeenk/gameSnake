@@ -10,10 +10,11 @@ import java.util.Iterator;
 
 public class GameBoard extends JPanel {
 
-    // 2d array of the block is the game board grid
-    private static Block[][] grid;
-    private Snake snake = new Snake(new SnakeBlock(170, 170, new Color(219, 20, 235))); // the snake
-    private AppleBlock apple= new AppleBlock(170, 200); // the apple that snake feeds on
+   private Block[][] grid = new Block[15][15];
+
+    private SnakeBlock snakeInit = new SnakeBlock(5, 5, new Color(219, 20, 235));
+    private Snake snake = new Snake(snakeInit); // the snake
+    private AppleBlock apple= new AppleBlock(10, 5); // the apple that snake feeds on
 
     // state of the game
     private boolean playing = false; // whether the game is running
@@ -22,19 +23,28 @@ public class GameBoard extends JPanel {
     // Game constants
     public static final int COURT_WIDTH = 450;
     public static final int COURT_HEIGHT = 450;
-    public static final int SNAKE_VELOCITY = 1;
 
     // Update interval for timer, in milliseconds
-    public static final int INTERVAL = 35;
+    public static final int INTERVAL = 135;
 
     // constructor for GameBoard
     public GameBoard (JLabel status) {
 
+        // iterate through the array and fill in the grid
         // 2d array for the game board and the initial location on the 2d array
-        grid = new Block[15][15];
-        grid[apple.getPx() / 30][apple.getPy() / 30] = apple;
-        SnakeBlock head = snake.getSnkBody().peekFirst();
-        grid[snake.getPx()][snake.getPy()] = head;
+        // 2d array of the block is the game board grid
+        for (int row = 0; row < 15; row++) {
+            for (int col = 0; col < 15; col++) {
+                grid[row][col] = new SquareBlock(col, row);
+            }
+        }
+        for (SnakeBlock snk : snake.getSnkBody()) {
+            if (snk.getPx() < 15 && snk.getPx() >= 0 && snk.getPy() < 15 && snk.getPy() >= 0) {
+                grid[snk.getPy()][snk.getPx()] = snk;
+            }
+        }
+
+        grid[apple.getPy()][apple.getPy()] = apple;
 
 
         // creates border around the court area, JComponent method
@@ -49,20 +59,14 @@ public class GameBoard extends JPanel {
         addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    snake.setVx(-SNAKE_VELOCITY);
+                    snake.setDirection(Direction.LEFT);
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    snake.setVx(SNAKE_VELOCITY);
+                    snake.setDirection(Direction.RIGHT);
                 } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    snake.setVy(SNAKE_VELOCITY);
+                    snake.setDirection(Direction.DOWN);
                 } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    snake.setVy(-SNAKE_VELOCITY);
+                    snake.setDirection(Direction.UP);
                 }
-            }
-
-            // when key is released, snake should be keep moving forward
-            public void keyReleased(KeyEvent e) {
-                snake.setVx(30);
-                snake.setVy(30);
             }
         });
 
@@ -74,8 +78,8 @@ public class GameBoard extends JPanel {
      * (Re-)set the game to its initial state.
      */
     public void reset() {
-        snake = new Snake(new SnakeBlock(170, 170, new Color (219, 20, 235)));
-        apple = new AppleBlock(170, 200);
+        snake = new Snake(new SnakeBlock(5, 5, new Color(219, 20, 235)));
+        apple = new AppleBlock(10, 5);
 
         playing = true;
         status.setText("Running...");
@@ -98,7 +102,7 @@ public class GameBoard extends JPanel {
      */
     void tick() {
         if (playing) {
-            // advance the square and snitch in their current direction.
+            // advance the snake in their current direction.
             snake.move();
 
             // check for the game end conditions:
@@ -129,17 +133,23 @@ public class GameBoard extends JPanel {
         super.paintComponent(g);
         g.setColor(new Color (50, 220, 120));
         g.fillRect(0, 0, 450, 450);
-        g.setColor(new Color (6, 138, 52));
+        for (int row = 0; row < 15; row++) {
+            for (int col = 0; col < 15; col++) {
+                grid[row][col].draw(g);
+            }
+        }
+        g.setColor(new Color(6, 138, 52));
         for (int row = 0; row < 450; row += 30) {
             g.drawLine(0, row, 450, row);
             for (int col = 0; col < 450; col += 30) {
                 g.drawLine(col, 0, col, 450);
             }
         }
-        new SnakeBlock(100, 150, Color.blue).draw(g);
-        snake.drawSnake(g);
-        // grid[apple.getPx() / 30][apple.getPy() / 30].draw(g);
-    }
+
+//        snake.drawSnake(g);
+//        apple.draw(g);
+        }
+
 
     @Override
     public Dimension getPreferredSize() {

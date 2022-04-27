@@ -4,19 +4,19 @@ import java.awt.*;
 import java.util.LinkedList;
 
 public class Snake {
+
     private LinkedList<SnakeBlock> body;
-    private int px;
-    private int py;
-    private int vx;
-    private int vy;
+    Direction direction;
 
     public Snake (SnakeBlock initSnake) {
-        body = new LinkedList<SnakeBlock>();
-        SnakeBlock tailSnake = new SnakeBlock(initSnake.getPx(), initSnake.getPy() + 1, new Color (92, 9, 235));
+        body = new LinkedList<>();
+        SnakeBlock midSnake = new SnakeBlock(
+                initSnake.getPx() - 1, initSnake.getPy(), new Color(61, 52, 235));
+        SnakeBlock tailSnake = new SnakeBlock(
+                midSnake.getPx() -1 , midSnake.getPy(), new Color(61, 52, 235));
         body.addLast(initSnake);
+        body.addLast(midSnake);
         body.addLast(tailSnake);
-        this.px = initSnake.getPx();
-        this.py = initSnake.getPy();
     }
 
     public int getSnakeSize() {
@@ -27,51 +27,54 @@ public class Snake {
         return this.body;
     }
 
-    public int getPx() {
-        return px;
+    public Direction getDirection(){
+        return this.direction;
     }
 
-    public int getPy() {
-        return py;
+    public void setDirection(Direction dir) {
+        this.direction = dir;
     }
 
-    // set vx, vy
-    public void setVx(int newVx) {
-        vx = newVx;
+    public void snakeGrow() {
+        SnakeBlock currTail = body.peekLast();
+        SnakeBlock newTail = new SnakeBlock(currTail.getPx(), currTail.getPy(), new Color(61, 52, 235));
+        body.addLast(newTail);
     }
 
-    public void setVy(int newVy) {
-        vy = newVy;
-    }
-
-    private void clip() {
-        this.px = Math.min(Math.max(this.px, 0), 450);
-        this.py = Math.min(Math.max(this.py, 0), 450);
-    }
-
+    // clip?
 
     /**
      * Moves the object by its velocity. Ensures that the object does not go
      * outside its bounds by clipping.
      */
     public void move() {
-        this.px += this.vx;
-        this.py += this.vy;
-
-        clip();
+        SnakeBlock head = this.body.peekFirst();
+        SnakeBlock newHead = null;
+        if (getDirection() == Direction.LEFT) {
+            newHead = new SnakeBlock(head.getPx() - 1, head.getPy(), new Color(219, 20, 235));
+        } else if (getDirection() == Direction.RIGHT) {
+            newHead = new SnakeBlock(head.getPx() + 1, head.getPy(), new Color(219, 20, 235));
+        } else if (getDirection() == Direction.DOWN) {
+            newHead = new SnakeBlock(head.getPx(), head.getPy() + 1, new Color(219, 20, 235));
+        } else if (getDirection() == Direction.UP) {
+            newHead = new SnakeBlock(head.getPx(), head.getPy() - 1, new Color(219, 20, 235));
+        }
+        //clip();
+        body.addFirst(newHead);
+        body.removeLast();
     }
 
 
-    /**
-     * Determine whether this game object is currently intersecting another
-     * object.
-     *
-     * Intersection is determined by comparing bounding boxes. If the bounding
-     * boxes overlap, then an intersection is considered to occur.
-     *
-     * @param that The other object
-     * @return Whether this object intersects the other object.
-//     */
+//    /**
+//     * Determine whether this game object is currently intersecting another
+//     * object.
+//     *
+//     * Intersection is determined by comparing bounding boxes. If the bounding
+//     * boxes overlap, then an intersection is considered to occur.
+//     *
+//     * @param that The other object
+//     * @return Whether this object intersects the other object.
+////     */
 //    public boolean collides(Block that) {
 //        // if snake head (snake block) intersects with other (bloc)
 //    }
