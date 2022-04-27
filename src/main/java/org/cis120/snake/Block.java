@@ -2,14 +2,9 @@ package org.cis120.snake;
 
 import java.awt.*;
 
-/**
- * An object in the game.
- *
- * Game objects exist in the game court. They have a position, velocity, size
- * and bounds. Their velocity controls how they move; their position should
- * always be within their bounds.
- */
-public abstract class GameObj {
+
+public abstract class Block {
+
     /*
      * Current position of the object (in terms of graphics coordinates)
      *
@@ -20,39 +15,22 @@ public abstract class GameObj {
     private int px;
     private int py;
 
-    /* Size of object, in pixels. */
-    private final int width;
-    private final int height;
-
     /* Velocity: number of pixels to move every time move() is called. */
     private int vx;
     private int vy;
 
-    /*
-     * Upper bounds of the area in which the object can be positioned. Maximum
-     * permissible x, y positions for the upper-left hand corner of the object.
-     */
-    private final int maxX;
-    private final int maxY;
+    /* Size of object, in pixels. */
+    private final int width;
+    private final int height;
 
     /**
      * Constructor
      */
-    public GameObj(
-            int vx, int vy, int px, int py, int width, int height, int courtWidth,
-            int courtHeight
-    ) {
-        this.vx = vx;
-        this.vy = vy;
+    public Block(int px, int py, int width, int height) {
         this.px = px;
         this.py = py;
         this.width = width;
         this.height = height;
-
-        // take the width and height into account when setting the bounds for
-        // the upper left corner of the object.
-        this.maxX = courtWidth - width;
-        this.maxY = courtHeight - height;
     }
 
     // **********************************************************************************
@@ -64,14 +42,6 @@ public abstract class GameObj {
 
     public int getPy() {
         return this.py;
-    }
-
-    public int getVx() {
-        return this.vx;
-    }
-
-    public int getVy() {
-        return this.vy;
     }
 
     public int getWidth() {
@@ -95,14 +65,6 @@ public abstract class GameObj {
         clip();
     }
 
-    public void setVx(int vx) {
-        this.vx = vx;
-    }
-
-    public void setVy(int vy) {
-        this.vy = vy;
-    }
-
     // **************************************************************************
     // * UPDATES AND OTHER METHODS
     // **************************************************************************
@@ -113,19 +75,8 @@ public abstract class GameObj {
      * area the user defines for it).
      */
     private void clip() {
-        this.px = Math.min(Math.max(this.px, 0), this.maxX);
-        this.py = Math.min(Math.max(this.py, 0), this.maxY);
-    }
-
-    /**
-     * Moves the object by its velocity. Ensures that the object does not go
-     * outside its bounds by clipping.
-     */
-    public void move() {
-        this.px += this.vx;
-        this.py += this.vy;
-
-        clip();
+        this.px = Math.min(Math.max(this.px, 0), 450);
+        this.py = Math.min(Math.max(this.py, 0), 450);
     }
 
     /**
@@ -138,7 +89,7 @@ public abstract class GameObj {
      * @param that The other object
      * @return Whether this object intersects the other object.
      */
-    public boolean intersects(GameObj that) {
+    public boolean intersects(Block that) {
         return (this.px + this.width >= that.px
                 && this.py + this.height >= that.py
                 && that.px + that.width >= this.px
@@ -157,7 +108,7 @@ public abstract class GameObj {
      * @param that The other object
      * @return Whether an intersection will occur.
      */
-    public boolean willIntersect(GameObj that) {
+    public boolean willIntersect(Block that) {
         int thisNextX = this.px + this.vx;
         int thisNextY = this.py + this.vy;
         int thatNextX = that.px + that.vx;
@@ -208,13 +159,13 @@ public abstract class GameObj {
     public Direction hitWall() {
         if (this.px + this.vx < 0) {
             return Direction.LEFT;
-        } else if (this.px + this.vx > this.maxX) {
+        } else if (this.px + this.vx > 450) {
             return Direction.RIGHT;
         }
 
         if (this.py + this.vy < 0) {
             return Direction.UP;
-        } else if (this.py + this.vy > this.maxY) {
+        } else if (this.py + this.vy > 450) {
             return Direction.DOWN;
         } else {
             return null;
@@ -229,7 +180,7 @@ public abstract class GameObj {
      * @param that The other object
      * @return Direction of impending object, null if all clear.
      */
-    public Direction hitObj(GameObj that) {
+    public Direction hitObj(Block that) {
         if (this.willIntersect(that)) {
             double halfThisWidth = (double) this.width / 2;
             double halfThatWidth = (double) that.width / 2;
@@ -269,4 +220,5 @@ public abstract class GameObj {
      *          etc.)
      */
     public abstract void draw(Graphics g);
+
 }

@@ -15,7 +15,7 @@ public class RunSnake implements Runnable {
 
         // Top-level frame in which game components live.
         // Be sure to change "TOP LEVEL FRAME" to the name of your game
-        final JFrame frame = new JFrame("TOP LEVEL FRAME");
+        final JFrame frame = new JFrame("Snake");
         frame.setLocation(300, 300);
 
         // Status panel at the bottom (south)
@@ -25,8 +25,8 @@ public class RunSnake implements Runnable {
         status_panel.add(status);
 
         // Main playing area
-        final GameCourt court = new GameCourt(status);
-        frame.add(court, BorderLayout.CENTER);
+        final GameBoard board = new GameBoard(status);
+        frame.add(board, BorderLayout.CENTER);
 
         // Reset button
         final JPanel control_panel = new JPanel();
@@ -38,8 +38,14 @@ public class RunSnake implements Runnable {
         // button is pressed, actionPerformed() will be called.
         final JButton reset = new JButton("Reset");
         // lamda expression : go to game court and call reset
-        reset.addActionListener(e -> court.reset());
+        reset.addActionListener(e -> board.reset());
         control_panel.add(reset);
+
+        // instruction display
+        String instruction = "Instruction for Snake: \n 1. Use the keyboard arrow for up, down, left, right. \n"
+                + "2. The more you eat the apples, the loner your body will be. \n"
+                + "3. If you hit the wall or your own body, you will die. \n";
+        JOptionPane.showMessageDialog(frame, instruction, "Snake Instruction", JOptionPane.OK_OPTION);
 
         // Put the frame on the screen
         frame.pack();
@@ -47,6 +53,6 @@ public class RunSnake implements Runnable {
         frame.setVisible(true);
 
         // Start game
-        court.reset();
+        board.reset();
     }
 }
