@@ -9,12 +9,12 @@ public class Snake {
     private LinkedList<SnakeBlock> body;
     Direction direction = Direction.RIGHT;
 
-    public Snake (SnakeBlock initSnake) {
+    public Snake(SnakeBlock initSnake) {
         body = new LinkedList<>();
         SnakeBlock midSnake = new SnakeBlock(
                 initSnake.getPx() - 1, initSnake.getPy(), new Color(61, 52, 235));
         SnakeBlock tailSnake = new SnakeBlock(
-                midSnake.getPx() -1 , midSnake.getPy(), new Color(61, 52, 235));
+                midSnake.getPx() - 1 , midSnake.getPy(), new Color(61, 52, 235));
         body.addLast(initSnake);
         body.addLast(midSnake);
         body.addLast(tailSnake);
@@ -32,7 +32,7 @@ public class Snake {
         return this.body;
     }
 
-    public Direction getDirection(){
+    public Direction getDirection() {
         return this.direction;
     }
 
@@ -42,7 +42,8 @@ public class Snake {
 
     public void snakeGrow() {
         SnakeBlock currTail = body.peekLast();
-        SnakeBlock newTail = new SnakeBlock(currTail.getPx(), currTail.getPy(), new Color(61, 52, 235));
+        SnakeBlock newTail = new SnakeBlock(
+                currTail.getPx(), currTail.getPy(), new Color(61, 52, 235));
         body.addLast(newTail);
     }
 
@@ -85,9 +86,10 @@ public class Snake {
     }
 
     // drawSnake, does not need one since we draw it from the grid
-    public void drawSnake (Graphics g) {
-        for(SnakeBlock p: body) {
+    public void drawSnake(Graphics g) {
+        for (SnakeBlock p: body) {
             p.draw(g);
         }
     }
+
 }

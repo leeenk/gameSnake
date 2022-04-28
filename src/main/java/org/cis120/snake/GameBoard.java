@@ -1,27 +1,23 @@
 package org.cis120.snake;
 
-import org.cis120.Game;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
+import java.nio.file.Paths;
+import java.util.LinkedList;
 
 public class GameBoard extends JPanel {
-
-   private Block[][] grid = new Block[15][15];
-
+    private Block[][] grid = new Block[15][15];
     private SnakeBlock snakeInit = new SnakeBlock(5, 5, new Color(219, 20, 235));
     private Snake snake = new Snake(snakeInit); // the snake
-    private AppleBlock apple= new AppleBlock(10, 5); // the apple that snake feeds on
+    private AppleBlock apple = new AppleBlock(10, 5); // the apple that snake feeds on
 
     // state of the game
     private boolean playing = false; // whether the game is running
     private final JLabel status; // Current status text, i.e. "Running..."
+    private int currScore;
 
     // Game constants
     public static final int COURT_WIDTH = 450;
@@ -31,7 +27,7 @@ public class GameBoard extends JPanel {
     public static final int INTERVAL = 175;
 
     // constructor for GameBoard
-    public GameBoard (JLabel status) {
+    public GameBoard(JLabel status) {
 
         fillGrid();
         // creates border around the court area, JComponent method
@@ -100,14 +96,53 @@ public class GameBoard extends JPanel {
     }
 
     // pause method
-    public void pause() {
+    public void pause(String filepath) throws IOException {
         // use buffer writer to take in the text and save
+        // put in each file
+        File file = Paths.get(filepath).toFile();
+        if (file.exists()) {
+            file.delete();
+        }
+
+        Writer ws = new FileWriter(file);
+        BufferedWriter writeScore = new BufferedWriter(ws);
+
+        // String list of Snake position
+        String str = "";
+        for (SnakeBlock s : snake.getSnkBody()) {
+            str += s.getPx() + "\n" + s.getPy() + "\n";
+
+        }
+
+        writeScore.write(+ getCurrScore() + "\n" + apple.getPx() + "\n" +
+                        apple.getPy() + "\n" + str);
+        writeScore.flush();
+        writeScore.close();
+
+        // stop the game
+        playing = false;
     }
 
     // resume method
-    public void resume() {
+    public void resume(String filepath) throws IOException {
         // use buffer reader to pull the text and start the game
+        File file = Paths.get(filepath).toFile();
+        Reader rs = new FileReader(file);
+        BufferedReader readScore = new BufferedReader(rs);
 
+        currScore = Integer.parseInt(readScore.readLine());
+        apple.setPx(Integer.parseInt(readScore.readLine()));
+        apple.setPy(Integer.parseInt(readScore.readLine()));
+
+        while (readScore.readLine() != null) {
+            for (SnakeBlock s : snake.getSnkBody()) {
+                s.setPx(Integer.parseInt(readScore.readLine()));
+                s.setPy(Integer.parseInt(readScore.readLine()));
+            }
+        }
+        readScore.close();
+        fillGrid();
+        playing = true;
     }
 
 
@@ -121,6 +156,13 @@ public class GameBoard extends JPanel {
         apple.setPy(newY);
     }
 
+    // the current score
+    public int getCurrScore() {
+        this.currScore = this.snake.getSnakeSize() - 3;
+        return this.currScore;
+    }
+
+
     /**
      * This method is called every time the timer defined in the constructor
      * triggers.
@@ -132,7 +174,7 @@ public class GameBoard extends JPanel {
             if (snake.snakeBumpedBlock(apple)) {
                 putApple();
                 snake.snakeGrow();
-                status.setText("Score:" + (snake.getSnakeSize() - 3));
+                status.setText("Score:" + getCurrScore());
             }
 
             // clipping so that not out of bound
@@ -140,7 +182,7 @@ public class GameBoard extends JPanel {
             if (snake.snakeBumpedSnake() || head.getPx() >= 15 || head.getPx() < 0
                     || head.getPy() >= 15 || head.getPy() < 0) {
                 playing = false;
-                status.setText("You Lost! \n" + "Score: " + (snake.getSnakeSize() - 3));
+                status.setText("You Lost! \n" + "Score: " + getCurrScore());
                 fillGrid();
             }
             repaint();
@@ -152,7 +194,7 @@ public class GameBoard extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(new Color (50, 220, 120));
+        g.setColor(new Color(50, 220, 120));
         g.fillRect(0, 0, 450, 450);
         g.setColor(new Color(6, 138, 52));
         for (int row = 0; row < 450; row += 30) {

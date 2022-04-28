@@ -6,9 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import static java.awt.Color.red;
-
-public class AppleBlock extends Block{
+public class AppleBlock extends Block {
     public static final String IMG_FILE = "files/apple.png";
     public static final int SIZE = 33;
     private static BufferedImage img;
@@ -34,6 +32,7 @@ public class AppleBlock extends Block{
 
     @Override
     public void draw(Graphics g) {
-        g.drawImage(img, this.getPx() * 30, this.getPy() * 30, this.getWidth(), this.getHeight(), null);
+        g.drawImage(
+                img, this.getPx() * 30, this.getPy() * 30, this.getWidth(), this.getHeight(), null);
     }
 }

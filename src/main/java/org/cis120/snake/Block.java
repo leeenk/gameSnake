@@ -15,10 +15,6 @@ public abstract class Block {
     private int px;
     private int py;
 
-    /* Velocity: number of pixels to move every time move() is called. */
-    private int vx;
-    private int vy;
-
     /* Size of object, in pixels. */
     private final int width;
     private final int height;

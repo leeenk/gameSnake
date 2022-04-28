@@ -4,6 +4,7 @@ package org.cis120.snake;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 /**
  * Game Main class that specifies the frame and widgets of the GUI
@@ -42,20 +43,34 @@ public class RunSnake implements Runnable {
         control_panel.add(reset);
 
         final JButton pause = new JButton("Pause");
-        pause.addActionListener(e -> board.pause());
+        pause.addActionListener(e -> {
+            try {
+                board.pause("current_game.txt");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
         control_panel.add(pause);
 
         final JButton resume = new JButton("Resume");
-        resume.addActionListener(e -> board.resume());
+        resume.addActionListener(e -> {
+            try {
+                board.resume("current_game.txt");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
         control_panel.add(resume);
 
 
 
         // instruction display
-        String instruction = "Instruction for Snake: \n" + "1. Use the keyboard arrow for up, down, left, right. \n"
+        String instruction = "Instruction for Snake: \n" + "1. Use the keyboard arrow for " +
+                "up, down, left, right. \n"
                 + "2. The more you eat the apples, the loner your body will be. \n"
                 + "3. If you hit the wall or your own body, you will die. \n";
-        JOptionPane.showMessageDialog(frame, instruction, "Snake Instruction", JOptionPane.OK_OPTION);
+        JOptionPane.showMessageDialog(
+                frame, instruction, "Snake Instruction", JOptionPane.OK_OPTION);
 
         // Put the frame on the screen
         frame.pack();
