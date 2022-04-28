@@ -6,6 +6,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 public class GameBoard extends JPanel {
@@ -134,12 +135,19 @@ public class GameBoard extends JPanel {
         apple.setPx(Integer.parseInt(readScore.readLine()));
         apple.setPy(Integer.parseInt(readScore.readLine()));
 
-        while (readScore.readLine() != null) {
+        int snakeLength = 0;
+        Iterator<String> iter = readScore.lines().iterator();
+        if (iter.hasNext()) {
+            snakeLength++;
+        }
+
+        for (int i = 0; i < snakeLength; i++) {
             for (SnakeBlock s : snake.getSnkBody()) {
                 s.setPx(Integer.parseInt(readScore.readLine()));
                 s.setPy(Integer.parseInt(readScore.readLine()));
             }
         }
+
         readScore.close();
         fillGrid();
         playing = true;
@@ -150,8 +158,6 @@ public class GameBoard extends JPanel {
     public void putApple() {
         int newX = (int) (Math.random() * 15);
         int newY = (int) (Math.random() * 15);
-        snake.getHead().getPx();
-        snake.getSnkBody().peekLast();
         apple.setPx(newX);
         apple.setPy(newY);
     }
