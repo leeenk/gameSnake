@@ -21,4 +21,10 @@ public class SnakeBlock extends Block {
         g.setColor(color);
         g.fillOval(this.getPx() * 30, this.getPy() * 30, this.getWidth(), this.getHeight());
     }
+
+    //getString method for debugging
+    @Override
+    public String getString() {
+        return "This is a Snake Block";
+    }
 }

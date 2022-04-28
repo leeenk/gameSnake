@@ -41,8 +41,18 @@ public class RunSnake implements Runnable {
         reset.addActionListener(e -> board.reset());
         control_panel.add(reset);
 
+        final JButton pause = new JButton("Pause");
+        pause.addActionListener(e -> board.pause());
+        control_panel.add(pause);
+
+        final JButton resume = new JButton("Resume");
+        resume.addActionListener(e -> board.resume());
+        control_panel.add(resume);
+
+
+
         // instruction display
-        String instruction = "Instruction for Snake: \n 1. Use the keyboard arrow for up, down, left, right. \n"
+        String instruction = "Instruction for Snake: \n" + "1. Use the keyboard arrow for up, down, left, right. \n"
                 + "2. The more you eat the apples, the loner your body will be. \n"
                 + "3. If you hit the wall or your own body, you will die. \n";
         JOptionPane.showMessageDialog(frame, instruction, "Snake Instruction", JOptionPane.OK_OPTION);

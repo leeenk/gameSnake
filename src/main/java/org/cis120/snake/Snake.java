@@ -1,12 +1,13 @@
 package org.cis120.snake;
 
 import java.awt.*;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 public class Snake {
 
     private LinkedList<SnakeBlock> body;
-    Direction direction;
+    Direction direction = Direction.RIGHT;
 
     public Snake (SnakeBlock initSnake) {
         body = new LinkedList<>();
@@ -17,6 +18,10 @@ public class Snake {
         body.addLast(initSnake);
         body.addLast(midSnake);
         body.addLast(tailSnake);
+    }
+
+    public SnakeBlock getHead() {
+        return body.peekFirst();
     }
 
     public int getSnakeSize() {
@@ -41,6 +46,21 @@ public class Snake {
         body.addLast(newTail);
     }
 
+    public boolean snakeBumpedBlock(Block that) {
+        return getHead().bumped(that);
+    }
+
+    public boolean snakeBumpedSnake() {
+        Iterator<SnakeBlock> snkIt = body.iterator();
+        SnakeBlock head = snkIt.next();
+        while (snkIt.hasNext()) {
+            if (snkIt.next().equals(head)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // clip?
 
     /**
@@ -48,7 +68,7 @@ public class Snake {
      * outside its bounds by clipping.
      */
     public void move() {
-        SnakeBlock head = this.body.peekFirst();
+        SnakeBlock head = getHead();
         SnakeBlock newHead = null;
         if (getDirection() == Direction.LEFT) {
             newHead = new SnakeBlock(head.getPx() - 1, head.getPy(), new Color(219, 20, 235));
@@ -64,50 +84,10 @@ public class Snake {
         body.removeLast();
     }
 
-
-//    /**
-//     * Determine whether this game object is currently intersecting another
-//     * object.
-//     *
-//     * Intersection is determined by comparing bounding boxes. If the bounding
-//     * boxes overlap, then an intersection is considered to occur.
-//     *
-//     * @param that The other object
-//     * @return Whether this object intersects the other object.
-////     */
-//    public boolean collides(Block that) {
-//        // if snake head (snake block) intersects with other (bloc)
-//    }
-//
-//    /**
-//     * Determine whether the game object will hit a wall in the next time step.
-//     * If so, return the direction of the wall in relation to this game object.
-//     *
-//     * @return Direction of impending wall, null if all clear.
-//     */
-//    public boolean hitWall() {
-//        if (this.px + this.vx < 0) {
-//            return Direction.LEFT;
-//        } else if (this.px + this.vx > 450) {
-//            return Direction.RIGHT;
-//        }
-//
-//        if (this.py + this.vy < 0) {
-//            return Direction.UP;
-//        } else if (this.py + this.vy > 450) {
-//            return Direction.DOWN;
-//        } else {
-//            return null;
-//        }
-//    }
-
-
-    // drawSnake
+    // drawSnake, does not need one since we draw it from the grid
     public void drawSnake (Graphics g) {
         for(SnakeBlock p: body) {
             p.draw(g);
         }
     }
-
-
 }
